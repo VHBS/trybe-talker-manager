@@ -83,6 +83,24 @@ app.put('/talker/:id', talkerController.talkerControllerArr, async (req, res) =>
     .catch((err) => console.log(err));
 });
 
+// Exercícios 6
+app.delete('/talker/:id', talkerController.tokenController, async (req, res) => {
+  const { id } = req.params;
+  await fs.readFile(apiTalker, 'utf8')
+    .then(async (data) => {
+      const dataJson = JSON.parse(data);
+      if (dataJson.every((t) => t.id !== Number(id))) {
+        return res.status(404).json({ message: `Talker com #${id} não encontrado` });
+      }
+      const editedTalkets = dataJson.filter((t) => t.id !== Number(id));
+      try {
+        await fs.writeFile('./talker.json', JSON.stringify(editedTalkets));
+        res.status(204).end();
+      } catch (err) { console.log(err); }
+    })
+    .catch((err) => console.log(err));
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
