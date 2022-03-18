@@ -18,10 +18,12 @@ app.get('/', (_request, response) => {
 });
 // ______________________________________________________
 
+// Exercício 1
 app.get('/talker', async (_req, res) => fs.readFile(apiTalker, 'utf8')
   .then((data) => res.status(200).json(JSON.parse(data)))
   .catch((_err) => console.log('erro')));
 
+// Exercício 2
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -35,14 +37,16 @@ app.get('/talker/:id', async (req, res) => {
     .catch((_err) => console.log('erro'));
 });
 
+// Exercício 3
 app.post('/login', loginController.email, loginController.password, (_req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   return res.status(200).json({ token });
 });
 
+// Exercício 4
 app.post('/talker', talkerController.talkerControllerArr, async (req, res) => {
   const { name, age, talk: { watchedAt, rate } } = req.body;
-  fs.readFile('./talker.json', 'utf8')
+  fs.readFile(apiTalker, 'utf8')
     .then(async (data) => {
       const dataJson = JSON.parse(data);
       const newId = dataJson[dataJson.length - 1].id + 1;
@@ -53,6 +57,28 @@ app.post('/talker', talkerController.talkerControllerArr, async (req, res) => {
       } catch (err) {
         console.log(err);
       }
+    })
+    .catch((err) => console.log(err));
+});
+
+// Exercício 5
+app.put('/talker/:id', talkerController.talkerControllerArr, async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  await fs.readFile(apiTalker, 'utf8')
+    .then(async (data) => {
+      const dataJson = JSON.parse(data);
+      if (dataJson.every((t) => t.id !== Number(id))) {
+        return res.status(404).json({ message: `Talker com #${id} não encontrado` });
+      }
+      const editedTalkets = dataJson.map((t) => {
+        if (t.id === Number(id)) return { name, age, id: Number(id), talk: { watchedAt, rate } };
+        return t;
+      });
+      try {
+        await fs.writeFile('./talker.json', JSON.stringify(editedTalkets));
+        res.status(200).json({ name, age, id: Number(id), talk: { watchedAt, rate } });
+      } catch (err) { console.log(err); }
     })
     .catch((err) => console.log(err));
 });

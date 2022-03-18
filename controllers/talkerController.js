@@ -14,7 +14,7 @@ const nameController = (req, res, next) => {
   const nameNotFound = { message: 'O campo "name" é obrigatório' };
   const nameTooShort = { message: 'O "name" deve ter pelo menos 3 caracteres' };
 
-  if (!name || name === '') res.status(400).json(nameNotFound);
+  if (!name) res.status(400).json(nameNotFound);
 
   if (name && name.length < 3) res.status(400).json(nameTooShort);
 
@@ -27,7 +27,7 @@ const ageController = (req, res, next) => {
   const ageNotFound = { message: 'O campo "age" é obrigatório' };
   const talkerTooYoung = { message: 'A pessoa palestrante deve ser maior de idade' };
 
-  if (!age || age === '') res.status(400).json(ageNotFound);
+  if (!age) res.status(400).json(ageNotFound);
 
   if (Number(age) < 18) res.status(400).json(talkerTooYoung);
 
@@ -52,9 +52,9 @@ const talkController = (req, res, next) => {
   const talkNotFound = {
     message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
   };
+  console.log(rate);
 
-  if ((!watchedAt || watchedAt === '')
-    || (!rate || rate === '')) {
+  if (rate !== 0 && (!watchedAt || !rate)) {
     res.status(400).json(talkNotFound);
   }
 
@@ -98,4 +98,12 @@ const talkerControllerArr = [
   talkRateController,
 ];
 
-module.exports = { talkerControllerArr };
+module.exports = { talkerControllerArr, 
+  tokenController,
+  nameController,
+  ageController,
+  talkObjController,
+  talkController,
+  talkDateController,
+  talkRateController,
+};
