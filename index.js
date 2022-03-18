@@ -18,6 +18,21 @@ app.get('/', (_request, response) => {
 });
 // ______________________________________________________
 
+// Exercício 7
+app.get('/talker/search', talkerController.tokenController, async (req, res) => {
+  const { q } = req.query;
+  fs.readFile(apiTalker, 'utf8')
+    .then((data) => {
+      const dataJson = JSON.parse(data);
+      if (!q) return res.status(200).json(dataJson);
+      console.log(dataJson.every((t) => !t.name.includes(q)));
+      if (dataJson.every((t) => !t.name.includes(q))) return res.status(200).json([]);
+      const filteredTalker = dataJson.filter((t) => t.name.includes(q));
+      return res.status(200).json(filteredTalker);
+    })
+    .catch((err) => console.log(err));
+});
+
 // Exercício 1
 app.get('/talker', async (_req, res) => fs.readFile(apiTalker, 'utf8')
   .then((data) => res.status(200).json(JSON.parse(data)))
