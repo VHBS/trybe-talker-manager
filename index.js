@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const index = require('./routes/index');
+const errorMiddleware = require('./middlewares/error');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,6 +17,8 @@ app.get('/', (_request, response) => {
 // ______________________________________________________
 
 app.use('/', index);
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log('Online');
